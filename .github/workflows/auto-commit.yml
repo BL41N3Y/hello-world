@@ -1,10 +1,9 @@
-name: Auto Update GitHub Activity
+name: Randomized GitHub Activity
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs daily at 12 PM UTC (adjust as needed)
-
-workflow_dispatch: # Allows manual triggering
+    - cron: '*/5 * * * *'  # Runs every 5 minutes
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   commit-bot:
@@ -25,14 +24,12 @@ jobs:
           MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
           COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
 
-          # Simulate real activity by modifying multiple files
-          FILES=("activity_log.txt" "README.md" "notes.txt")
-          FILE=${FILES[$RANDOM % ${#FILES[@]}]}
-          echo "Last updated on $(date)" >> $FILE
+          # Simulate real activity by modifying a file
+          echo "Last updated on $(date)" >> activity_log.txt
 
           # Git operations
-          git config --global user.name "BL41N3Y"
-          git config --global user.email "bl41n3y@gmail.com"
-          git add $FILE
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add activity_log.txt
           git commit -m "$COMMIT_MESSAGE" || exit 0
           git push
