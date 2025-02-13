@@ -1,0 +1,38 @@
+name: Auto Update GitHub Activity
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Runs daily at 12 PM UTC (adjust as needed)
+
+workflow_dispatch: # Allows manual triggering
+
+jobs:
+  commit-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate Randomized Commit
+        run: |
+          # Random delay between 0 and 3600 seconds (1 hour)
+          DELAY=$(( RANDOM % 3600 ))
+          echo "Sleeping for $DELAY seconds to randomize commit time..."
+          sleep $DELAY
+
+          # Random commit messages
+          MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
+          COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
+
+          # Simulate real activity by modifying multiple files
+          FILES=("activity_log.txt" "README.md" "notes.txt")
+          FILE=${FILES[$RANDOM % ${#FILES[@]}]}
+          echo "Last updated on $(date)" >> $FILE
+
+          # Git operations
+          git config --global user.name "your-github-username"
+          git config --global user.email "your-email@example.com"
+          git add $FILE
+          git commit -m "$COMMIT_MESSAGE" || exit 0
+          git push
