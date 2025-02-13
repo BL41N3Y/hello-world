@@ -31,8 +31,8 @@ jobs:
           echo "Last updated on $(date)" >> $FILE
 
           # Git operations
-          git config --global user.name "your-github-username"
-          git config --global user.email "your-email@example.com"
+          git config --global user.name "BL41N3Y"
+          git config --global user.email "bl41n3y@gmail.com"
           git add $FILE
           git commit -m "$COMMIT_MESSAGE" || exit 0
           git push
