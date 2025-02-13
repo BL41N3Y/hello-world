@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '*/2 * * *' # Runs daily at 12 PM UTC (adjust as needed)
 
+workflow_dispatch: # Allows manual triggering
+
 jobs:
   commit-bot:
     runs-on: ubuntu-latest
@@ -12,14 +14,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Update Activity File
+      - name: Generate Randomized Commit
         run: |
-          echo "Last updated on $(date)" >> activity_log.txt
+          # Random delay between 0 and 3600 seconds (1 hour)
+          DELAY=$(( RANDOM % 3600 ))
+          echo "Sleeping for $DELAY seconds to randomize commit time..."
+          sleep $DELAY
 
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "BL41N3Y"
-          git config --global user.email "bl41n3y@gmail.com"
-          git add activity_log.txt
-          git commit -m "Automated update on $(date)" || exit 0
+          # Random commit messages
+          MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
+          COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
+
+          # Simulate real activity by modifying multiple files
+          FILES=("activity_log.txt" "README.md" "notes.txt")
+          FILE=${FILES[$RANDOM % ${#FILES[@]}]}
+          echo "Last updated on $(date)" >> $FILE
+
+          # Git operations
+          git config --global user.name "your-github-username"
+          git config --global user.email "your-email@example.com"
+          git add $FILE
+          git commit -m "$COMMIT_MESSAGE" || exit 0
           git push
