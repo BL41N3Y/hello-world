@@ -1,0 +1,25 @@
+name: Auto Update GitHub Activity
+
+on:
+  schedule:
+    - cron: '*/2 * * *' # Runs daily at 12 PM UTC (adjust as needed)
+
+jobs:
+  commit-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update Activity File
+        run: |
+          echo "Last updated on $(date)" >> activity_log.txt
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "BL41N3Y"
+          git config --global user.email "bl41n3y@gmail.com"
+          git add activity_log.txt
+          git commit -m "Automated update on $(date)" || exit 0
+          git push
