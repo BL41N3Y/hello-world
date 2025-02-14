@@ -32,9 +32,9 @@ jobs:
           git config --global user.name "BL41N3Y"
           git config --global user.email "bl41n3y@gmail.com"
 
-          # Ensure latest changes before committing
-          git pull --rebase origin master || git rebase --abort
+          # Pull latest changes before committing
+          git pull --rebase origin master || git reset --hard origin/master
 
           git add activity_log.txt
           git commit -m "$COMMIT_MESSAGE" || exit 0
-          git push
+          git push --force
