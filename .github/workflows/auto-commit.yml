@@ -27,9 +27,14 @@ jobs:
           # Simulate real activity by modifying a file
           echo "Last updated on $(date)" >> activity_log.txt
 
-          # Git operations
+      - name: Git operations
+        run: |
           git config --global user.name "BL41N3Y"
           git config --global user.email "bl41n3y@gmail.com"
+
+          # Ensure latest changes before committing
+          git pull --rebase origin master || git rebase --abort
+
           git add activity_log.txt
           git commit -m "$COMMIT_MESSAGE" || exit 0
           git push
