@@ -5,6 +5,9 @@ on:
     - cron: '*/5 * * * *'  # Runs every 5 minutes
   workflow_dispatch:  # Allows manual triggering
 
+permissions:
+  contents: write  # Ensure the workflow can push changes
+
 jobs:
   commit-bot:
     runs-on: ubuntu-latest
@@ -25,16 +28,24 @@ jobs:
           COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
 
           # Simulate real activity by modifying a file
-          echo "Last updated on $(date)" >> activity_log.txt
+          echo "Updated: $(date +%s)" >> activity_log.txt
 
       - name: Git operations
         run: |
           git config --global user.name "BL41N3Y"
           git config --global user.email "bl41n3y@gmail.com"
 
-          # Pull latest changes before committing
-          git pull --rebase origin master || git reset --hard origin/master
+          # Ensure latest changes are pulled
+          git pull --rebase origin main || git reset --hard origin/main
 
+          # Check if there are changes
           git add activity_log.txt
-          git commit -m "$COMMIT_MESSAGE" || exit 0
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+
+          git commit -m "$COMMIT_MESSAGE"
           git push --force
+
+      - name: Debug Git Status (Optional)
+        run: |
+          git status
+          git log -1
