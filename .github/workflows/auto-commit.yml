@@ -24,8 +24,9 @@ jobs:
           MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
           COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
 
-          # Simulate real activity by modifying a file
-          echo "Last updated on $(date)" >> activity_log.txt
+          # Ensure file changes are detected
+          TIMESTAMP=$(date +%s)  # Unique timestamp
+          echo "Last updated on $(date) - $TIMESTAMP" > activity_log.txt
 
       - name: Git operations
         run: |
@@ -35,6 +36,7 @@ jobs:
           # Pull latest changes before committing
           git pull --rebase origin master || git reset --hard origin/master
 
+          # Ensure changes are staged
           git add activity_log.txt
-          git commit -m "$COMMIT_MESSAGE" || exit 0
+          git diff --cached --quiet || git commit -m "$COMMIT_MESSAGE"
           git push --force
