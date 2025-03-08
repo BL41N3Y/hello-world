@@ -39,6 +39,13 @@ jobs:
           # Pull latest changes from remote branch
           git pull --rebase origin master || git reset --hard origin/master
 
+          # If a merge conflict occurs, automatically resolve it
+          if [ -n "$(git ls-files --unmerged)" ]; then
+            echo "Merge conflict detected. Resolving automatically..."
+            git checkout --ours activity_log.txt
+            git add activity_log.txt
+          fi
+
           # Apply the stashed changes (if any)
           if git stash list | grep -q "Auto-stash before pull"; then
             git stash pop
