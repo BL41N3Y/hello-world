@@ -39,11 +39,12 @@ jobs:
           # Pull latest changes from remote branch
           git pull --rebase origin master || git reset --hard origin/master
 
-          # If a merge conflict occurs, automatically resolve it
-          if [ -n "$(git ls-files --unmerged)" ]; then
+          # Check if merge conflict exists
+          if git ls-files --unmerged | grep -q activity_log.txt; then
             echo "Merge conflict detected. Resolving automatically..."
             git checkout --ours activity_log.txt
             git add activity_log.txt
+            git commit -m "Resolved merge conflict in activity_log.txt" || echo "No changes to commit"
           fi
 
           # Apply the stashed changes (if any)
