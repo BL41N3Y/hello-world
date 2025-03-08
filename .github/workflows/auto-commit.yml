@@ -40,9 +40,17 @@ jobs:
           git pull --rebase origin master || git reset --hard origin/master
 
           # Apply the stashed changes (if any)
-          git stash list | grep "Auto-stash before pull" && git stash pop || echo "No stash to apply"
+          if git stash list | grep -q "Auto-stash before pull"; then
+            git stash pop
+            git add -A  # Ensure all changes are staged
+          else
+            echo "No stash to apply"
+          fi
 
-          # Ensure changes are staged and committed
-          git add activity_log.txt
-          git diff --cached --quiet || git commit -m "$COMMIT_MESSAGE"
-          git push --force
+          # Ensure changes are committed
+          if ! git diff --cached --quiet; then
+            git commit -m "${COMMIT_MESSAGE:-Auto-commit update}"
+            git push --force
+          else
+            echo "No new changes to commit"
+          fi
