@@ -24,9 +24,12 @@ jobs:
           MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
           COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
 
-          # Ensure file changes are detected
+          # Ensure a change is always made to activity_log.txt
           TIMESTAMP=$(date +%s)  # Unique timestamp
-          echo "Last updated on $(date) - $TIMESTAMP" > activity_log.txt
+          echo "Last updated on $(date) - $TIMESTAMP" >> activity_log.txt
+
+          # Ensure a change is always made to notes.txt
+          echo "Auto-update on $(date)" >> notes.txt
 
       - name: Git operations
         run: |
@@ -37,9 +40,11 @@ jobs:
           git fetch origin master
           git reset --hard origin/master
 
-          # Forcefully resolve any merge conflicts
-          git add activity_log.txt
-          git commit -m "${COMMIT_MESSAGE:-Auto-commit update}" || echo "No changes to commit"
-
+          # Ensure changes are staged
+          git add activity_log.txt notes.txt
+          
+          # Only commit if there are actual changes
+          git diff --staged --quiet || git commit -m "$COMMIT_MESSAGE"
+          
           # Push the commit
           git push --force
