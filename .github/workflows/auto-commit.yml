@@ -8,6 +8,7 @@ on:
 jobs:
   commit-bot:
     runs-on: ubuntu-latest
+    timeout-minutes: 10  # Prevents long delays from causing cancellations
 
     steps:
       - name: Checkout repository
@@ -15,8 +16,8 @@ jobs:
 
       - name: Generate Randomized Commit
         run: |
-          # Random delay between 0 and 3600 seconds (1 hour)
-          DELAY=$(( RANDOM % 3600 ))
+          # Reduced random delay to prevent workflow cancellations
+          DELAY=$(( RANDOM % 600 ))  # Max wait time is now 10 minutes
           echo "Sleeping for $DELAY seconds to randomize commit time..."
           sleep $DELAY
 
