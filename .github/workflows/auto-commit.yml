@@ -21,16 +21,16 @@ jobs:
           echo "Sleeping for $DELAY seconds to randomize commit time..."
           sleep $DELAY
 
-          # Random commit messages
-          MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
-          COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
-
           # Ensure a change is always made to activity_log.txt
           TIMESTAMP=$(date +%s)  # Unique timestamp
           echo "Last updated on $(date) - $TIMESTAMP" >> activity_log.txt
 
           # Ensure a change is always made to notes.txt
           echo "Auto-update on $(date)" >> notes.txt
+
+          # Random commit messages
+          MESSAGES=("Improved documentation" "Refactored some code" "Updated project files" "Minor bug fixes" "Optimized performance")
+          COMMIT_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]}]}
 
       - name: Git operations
         run: |
